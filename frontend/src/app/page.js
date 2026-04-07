@@ -19,25 +19,25 @@ const nodeTypes = { custom: CustomNode };
 
 // Hard-coded column X positions per owner — Dagre-free layout
 const COLUMN_X = {
-  'Project Manager':   80,
+  'Project Manager': 80,
   'Frontend Engineer': 440,
-  'Backend Engineer':  800,
-  'QA Tester':        1160,
+  'Backend Engineer': 800,
+  'QA Tester': 1160,
 };
 const NODE_HEIGHT = 100;
-const NODE_GAP    = 24;
+const NODE_GAP = 42;
 
 // Status pipeline steps
 const STATUS_STEPS = {
-  idle:            null,
-  initiating:      { label: '⚡ Initiating swarm...',              color: '#818cf8' },
-  pm:              { label: '🧠 Project Manager thinking...',       color: '#a78bfa' },
-  frontend:        { label: '🎨 Frontend Engineer thinking...',     color: '#60a5fa' },
-  backend:         { label: '⚙️  Backend Engineer thinking...',     color: '#f87171' },
-  qa:              { label: '🔍 QA Tester thinking...',            color: '#facc15' },
-  semantic_search: { label: '🕸️  Running semantic search...',      color: '#34d399' },
-  linking:         { label: '🔗 Linking nodes across agents...',    color: '#22d3ee' },
-  complete:        { label: '✅ Swarm complete!',                   color: '#4ade80' },
+  idle: null,
+  initiating: { label: '⚡ Initiating swarm...', color: '#818cf8' },
+  pm: { label: '🧠 Project Manager thinking...', color: '#a78bfa' },
+  frontend: { label: '🎨 Frontend Engineer thinking...', color: '#60a5fa' },
+  backend: { label: '⚙️  Backend Engineer thinking...', color: '#f87171' },
+  qa: { label: '🔍 QA Tester thinking...', color: '#facc15' },
+  semantic_search: { label: '🕸️  Running semantic search...', color: '#34d399' },
+  linking: { label: '🔗 Linking nodes across agents...', color: '#22d3ee' },
+  complete: { label: '✅ Swarm complete!', color: '#4ade80' },
 };
 
 // Log entry type classifier
@@ -134,7 +134,7 @@ function NodeMindCanvas({ nodes, edges, onNodesChange, onEdgesChange, onNodeClic
       minZoom={0.5}
       maxZoom={1.2}
       fitView
-      fitViewOptions={{ padding: { top: 60, bottom: 60, left: 60, right: 440 } }}
+      fitViewOptions={{ padding: { top: 80, bottom: 80, left: 80, right: 440 } }}
     >
       <Background color="#111318" gap={28} size={1} />
       <Controls style={{ background: '#181b21', border: '1px solid #272a31' }} />
