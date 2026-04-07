@@ -20,28 +20,87 @@ body {
 }
 
 .custom-node {
-  background-color: var(--panel);
-  border-radius: 8px;
-  padding: 14px 20px;
-  min-width: 180px;
-  border-left: 6px solid var(--unknown-color);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-  font-size: 14px;
+  background-color: #0d1117;
+  border-radius: 12px;
+  width: 250px;
+  min-height: 70px;
+  border: 1px solid #1e2028;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  font-size: 13px;
   font-weight: 500;
   color: var(--foreground);
   animation: swarmPulse 3s infinite ease-in-out;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.3s ease, filter 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.custom-node:hover {
-  transform: scale(1.05);
+.custom-node.faded {
+  opacity: 0.15;
+  filter: grayscale(0.8) blur(0.5px);
+  pointer-events: none;
+}
+
+/* Agent Headers */
+.node-header {
+  padding: 6px 12px;
+  background: rgba(82, 82, 91, 0.1); 
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.owner-bullet {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--unknown-color);
+}
+
+.owner-title {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.9;
+  color: #fff;
+}
+
+.node-body {
+  padding: 12px;
+  flex: 1;
+}
+
+.node-label {
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+/* Owner-specific themes */
+.custom-node[data-owner="Project Manager"] .node-header { background: rgba(139, 92, 246, 0.15); }
+.custom-node[data-owner="Project Manager"] .owner-bullet { background: var(--pm-color); box-shadow: 0 0 8px var(--pm-color); }
+.custom-node[data-owner="Project Manager"] { --glow: var(--pm-color); }
+
+.custom-node[data-owner="Frontend Engineer"] .node-header { background: rgba(59, 130, 246, 0.15); }
+.custom-node[data-owner="Frontend Engineer"] .owner-bullet { background: var(--fe-color); box-shadow: 0 0 8px var(--fe-color); }
+.custom-node[data-owner="Frontend Engineer"] { --glow: var(--fe-color); }
+
+.custom-node[data-owner="Backend Engineer"] .node-header { background: rgba(239, 68, 68, 0.15); }
+.custom-node[data-owner="Backend Engineer"] .owner-bullet { background: var(--be-color); box-shadow: 0 0 8px var(--be-color); }
+.custom-node[data-owner="Backend Engineer"] { --glow: var(--be-color); }
+
+.custom-node[data-owner="QA Tester"] .node-header { background: rgba(234, 179, 8, 0.15); }
+.custom-node[data-owner="QA Tester"] .owner-bullet { background: var(--qa-color); box-shadow: 0 0 8px var(--qa-color); }
+.custom-node[data-owner="QA Tester"] { --glow: var(--qa-color); }
+
+.custom-node:not(.faded):hover, 
+.custom-node.selected {
+  transform: scale(1.04) translateY(-2px);
   z-index: 100;
+  box-shadow: 0 0 20px 2px var(--glow, rgba(99,102,241,0.3));
 }
-
-.custom-node[data-owner="Project Manager"] { border-left-color: var(--pm-color); --glow: var(--pm-color); }
-.custom-node[data-owner="Frontend Engineer"] { border-left-color: var(--fe-color); --glow: var(--fe-color); }
-.custom-node[data-owner="Backend Engineer"] { border-left-color: var(--be-color); --glow: var(--be-color); }
-.custom-node[data-owner="QA Tester"] { border-left-color: var(--qa-color); --glow: var(--qa-color); }
 
 .owner-tag {
   font-size: 10px;

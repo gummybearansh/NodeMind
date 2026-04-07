@@ -24,8 +24,8 @@ const COLUMN_X = {
   'Backend Engineer':  800,
   'QA Tester':        1160,
 };
-const NODE_HEIGHT = 80;
-const NODE_GAP    = 16;
+const NODE_HEIGHT = 100;
+const NODE_GAP    = 24;
 
 // Status pipeline steps
 const STATUS_STEPS = {
@@ -60,32 +60,81 @@ const LOG_COLORS = {
 };
 
 // Inner component that can call useReactFlow()
-function NodeMindCanvas({ nodes, edges, onNodesChange, onEdgesChange, onNodeClick,
+function NodeMindCanvas({ nodes, edges, onNodesChange, onEdgesChange, onNodeClick, onPaneClick,
+                          onNodeDragStart, onNodeDragStop,
                           activeSessionPrompt, promptInput, setPromptInput,
                           isSubmitting, handlePromptSubmit,
-                          logs, logsEndRef, statusKey }) {
+                          logs, logsEndRef, statusKey,
+                          highlightedNodeId }) {
   const { fitView } = useReactFlow();
   const statusInfo  = STATUS_STEPS[statusKey];
+
+  // Neighborhood highlighting calculation
+  const { connectedNodes, connectedEdges } = React.useMemo(() => {
+    if (!highlightedNodeId) return { connectedNodes: new Set(), connectedEdges: new Set() };
+    
+    const nodeSet = new Set([highlightedNodeId]);
+    const edgeSet = new Set();
+    
+    edges.forEach(e => {
+      if (e.source === highlightedNodeId || e.target === highlightedNodeId) {
+        edgeSet.add(e.id);
+        nodeSet.add(e.source);
+        nodeSet.add(e.target);
+      }
+    });
+
+    return { connectedNodes: nodeSet, connectedEdges: edgeSet };
+  }, [highlightedNodeId, edges]);
+
+  // Apply visual state (faded/highlighted) to nodes and edges
+  const displayNodes = React.useMemo(() => {
+    if (!highlightedNodeId) return nodes;
+    return nodes.map(n => ({
+      ...n,
+      data: { ...n.data, faded: !connectedNodes.has(n.id) }
+    }));
+  }, [nodes, highlightedNodeId, connectedNodes]);
+
+  const displayEdges = React.useMemo(() => {
+    if (!highlightedNodeId) return edges;
+    return edges.map(e => ({
+      ...e,
+      animated: connectedEdges.has(e.id),
+      style: { 
+        ...e.style, 
+        opacity: connectedEdges.has(e.id) ? 1 : 0.08,
+        stroke:  connectedEdges.has(e.id) ? '#818cf8' : e.style?.stroke,
+        strokeWidth: connectedEdges.has(e.id) ? 3 : 1,
+      }
+    }));
+  }, [edges, highlightedNodeId, connectedEdges]);
 
   // Auto fit-view whenever nodes are added
   useEffect(() => {
     if (nodes.length > 0) {
-      setTimeout(() => fitView({ padding: 0.25, duration: 400 }), 50);
+      setTimeout(() => fitView({ 
+        padding: { top: 120, bottom: 120, left: 120, right: 480 }, 
+        duration: 500 
+      }), 50);
     }
   }, [nodes.length, fitView]);
 
   return (
     <ReactFlow
-      nodes={nodes}
-      edges={edges}
+      nodes={displayNodes}
+      edges={displayEdges}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onNodeClick={onNodeClick}
+      onPaneClick={onPaneClick}
+      onNodeDragStart={onNodeDragStart}
+      onNodeDragStop={onNodeDragStop}
       nodeTypes={nodeTypes}
-      minZoom={0.1}
-      maxZoom={1.5}
+      minZoom={0.05}
+      maxZoom={2}
       fitView
-      fitViewOptions={{ padding: 0.3 }}
+      fitViewOptions={{ padding: { top: 120, bottom: 120, left: 120, right: 480 } }}
     >
       <Background color="#111318" gap={28} size={1} />
       <Controls style={{ background: '#181b21', border: '1px solid #272a31' }} />
@@ -317,8 +366,10 @@ export default function NodeMindDashboard() {
   const [isSubmitting, setIsSubmitting]  = useState(false);
   const [logs, setLogs]                  = useState([]);
   const [statusKey, setStatusKey]        = useState('idle');
+  const [highlightedNodeId, setHighlightedNodeId] = useState(null);
   const logsEndRef                       = useRef(null);
   const columnCounters                   = useRef({});
+  const assignedIndices                  = useRef({}); // Stabilize ID -> Row mapping
 
   // Auto-scroll logs
   useEffect(() => {
@@ -337,17 +388,23 @@ export default function NodeMindDashboard() {
         // Phase 1: place node in column immediately
         if (payload.type === 'addNode' && payload.node) {
           const owner = payload.node.data?.owner ?? 'Unknown';
-          const col   = columnCounters.current;
-          const count = col[owner] ?? 0;
-          col[owner]  = count + 1;
+          const nodeId = payload.node.id;
+
+          // Find or assign a stable vertical index for this node
+          let count = assignedIndices.current[nodeId];
+          if (count === undefined) {
+             count = columnCounters.current[owner] ?? 0;
+             columnCounters.current[owner] = count + 1;
+             assignedIndices.current[nodeId] = count;
+          }
 
           const x = COLUMN_X[owner] ?? 1520;
-          const y = count * (NODE_HEIGHT + NODE_GAP) + 80;
+          const y = count * (NODE_HEIGHT + NODE_GAP) + 60;
 
           const newNode = {
-            id:       payload.node.id,
+            id:       nodeId,
             type:     'custom',
-            data:     payload.node.data,
+            data:     { ...payload.node.data, owner },
             position: { x, y },
           };
 
@@ -411,7 +468,21 @@ export default function NodeMindDashboard() {
 
   const onNodeClick = useCallback((_, node) => {
     setSelectedNode(node);
+    setHighlightedNodeId(node.id);
     setIsDrawerOpen(true);
+  }, []);
+
+  const onPaneClick = useCallback(() => {
+    setHighlightedNodeId(null);
+  }, []);
+
+  const onNodeDragStart = useCallback((_, node) => {
+    setHighlightedNodeId(node.id);
+  }, []);
+
+  const onNodeDragStop = useCallback(() => {
+    // Keep it highlighted after drag, reset only on pane click
+    // Or if they want it only while dragging, set null here
   }, []);
 
   const handlePromptSubmit = async (e) => {
@@ -421,7 +492,8 @@ export default function NodeMindDashboard() {
     setNodes([]);
     setEdges([]);
     setLogs([]);
-    columnCounters.current = {};
+    columnCounters.current  = {};
+    assignedIndices.current = {}; 
     setActiveSessionPrompt(promptInput);
     setStatusKey('initiating');
     setIsSubmitting(true);
@@ -456,6 +528,10 @@ export default function NodeMindDashboard() {
           logs={logs}
           logsEndRef={logsEndRef}
           statusKey={statusKey}
+          highlightedNodeId={highlightedNodeId}
+          onPaneClick={onPaneClick}
+          onNodeDragStart={onNodeDragStart}
+          onNodeDragStop={onNodeDragStop}
         />
       </ReactFlowProvider>
 
