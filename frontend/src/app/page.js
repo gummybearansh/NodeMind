@@ -25,7 +25,7 @@ const COLUMN_X = {
   'QA Tester':        1160,
 };
 const NODE_HEIGHT = 80;
-const NODE_GAP    = 60;
+const NODE_GAP    = 16;
 
 // Status pipeline steps
 const STATUS_STEPS = {
@@ -276,14 +276,16 @@ function NodeMindCanvas({ nodes, edges, onNodesChange, onEdgesChange, onNodeClic
                 const isStatus = type === 'status';
                 return (
                   <div key={i} style={{
-                    fontFamily:  'monospace',
-                    fontSize:    11,
-                    lineHeight:  1.6,
+                    fontFamily:   'monospace',
+                    fontSize:     11,
+                    lineHeight:   1.6,
                     color,
                     paddingTop:   isStatus ? 6 : 0,
                     borderTop:    isStatus ? '1px solid #0f1117' : 'none',
                     paddingBottom:isStatus ? 2 : 0,
-                    wordBreak:   'break-all',
+                    wordBreak:    'break-word',
+                    overflowWrap: 'break-word',
+                    whiteSpace:   'pre-wrap',
                   }}>
                     <span style={{ color: '#1f2937', userSelect: 'none' }}>
                       {type === 'node'     ? '+ ' :
