@@ -192,26 +192,28 @@ source venv/bin/activate      # Windows: venv\Scripts\activate
 pip install -e .
 ```
 
-### 3. Configure environment variables
+### 3. Initialize and Configure
+
+NodeMind features an interactive setup wizard. Run the following command to initialize your workspace and configure your API keys:
 
 ```bash
-cp .env.example .env
+nodemind init
 ```
 
-Edit `.env`:
+The wizard will safely prompt you for:
+- **MongoDB Connection URL**: (Defaults to `mongodb://localhost:27017`)
+- **Gemini API Key**: Securely hidden during input.
 
-```env
-GEMINI_API_KEY=your_gemini_api_key_here
-MONGO_DB_URL=mongodb://localhost:27017
-CHROMA_PERSIST_DIR=./chroma_db
-```
+Your settings will be saved to a `.env` file in your current directory.
 
-### 4. Start MongoDB
+### 4. Start MongoDB (if not using remote)
 
+If you are using a local MongoDB instance, ensure it is running:
 ```bash
-mongod --dbpath /usr/local/var/mongodb   # macOS with Homebrew
-# or
+# macOS with Homebrew
 brew services start mongodb-community
+# Windows
+# Ensure 'mongod' is running or MongoDB service is started
 ```
 
 ### 5. Install the frontend
@@ -241,32 +243,42 @@ Open `http://localhost:3000` in your browser.
 
 ---
 
-## Installation via pip *(coming soon)*
+## Installation via pip
 
-NodeMind will be available as a pip-installable package. Once released:
+NodeMind is a production-ready CLI package. To install it globally on your system:
 
 ```bash
-pip install nodemind
+pip install "git+https://github.com/gummybearansh/NodeMind.git"
+nodemind init
 nodemind start
 ```
 
-No clone required. The visualizer frontend will be bundled and served automatically.
+No clone required for the backend. The CLI handles initializing your environment dynamically.
 
 ---
 
-## Installation via curl *(coming soon)*
+## Installation via curl
 
 One-line setup script for macOS/Linux:
 
 ```bash
-curl -sSL https://nodemind.dev/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/gummybearansh/NodeMind/main/install.sh | bash
 ```
 
 This will:
-1. Check Python and Node.js requirements
-2. Install the `nodemind` CLI globally
-3. Walk you through `.env` configuration
-4. Launch the daemon and open the visualizer
+1. Check Python requirements
+2. Install the `nodemind` CLI via pip
+3. Guide you through initialization and starting the frontend
+
+---
+
+## CLI Usage
+
+The `nodemind` CLI comes with several built-in commands designed for a smooth developer experience:
+
+- `nodemind init` — Bootstraps a new NodeMind workspace in your current directory (creates `.brain/` and a `.env` template).
+- `nodemind doctor` — Scans your system to verify all requirements (Python, Node.js, MongoDB ports, and API keys) are configured correctly.
+- `nodemind start` — Starts the backend server and the Textual TUI, emitting instructions for launching the frontend.
 
 ---
 
@@ -364,6 +376,22 @@ NodeMind_Backend/
 - [ ] **Export** — export the session graph as a PNG, JSON, or Obsidian vault
 - [ ] **Multi-model support** — swap Gemini for Claude, GPT-4o, or local Ollama models
 - [ ] **Electron wrapper** — ship as a desktop app with bundled MongoDB + ChromaDB
+
+---
+
+## Publishing to PyPI
+
+If you are a maintainer, here is how you publish a new version of `nodemind`:
+
+1. Update the version in `pyproject.toml`.
+2. Build the package:
+   ```bash
+   python -m build
+   ```
+3. Upload to PyPI using twine:
+   ```bash
+   python -m twine upload dist/*
+   ```
 
 ---
 

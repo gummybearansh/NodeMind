@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nodemind"
+version = "0.1.0"
+description = "NodeMind - Multi-agent framework with TUI and Backend"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "motor",
+    "chromadb",
+    "python-dotenv",
+    "watchdog",
+    "textual",
+    "google-genai",
+]
+
+[project.scripts]
+nodemind = "backend.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["backend*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.js", "*.mjs", "*.json", "*.html", "*.css", "*.txt", "*.md", ".env.example"]

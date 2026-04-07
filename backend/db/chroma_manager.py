@@ -12,9 +12,14 @@ class GeminiEmbeddingFunction(EmbeddingFunction):
     Avoids the broken ONNX local model and the deprecated google-generativeai package.
     """
     def __init__(self, api_key: str, model: str = "gemini-embedding-001"):
-        from google import genai
-        self._client = genai.Client(api_key=api_key)
-        self._model  = model
+        self._client = None
+        self._model = model
+        if api_key and api_key.strip() and api_key != "your_gemini_api_key_here":
+            try:
+                from google import genai
+                self._client = genai.Client(api_key=api_key)
+            except Exception:
+                pass
 
     def __call__(self, input: list[str]) -> Embeddings:
         embeddings = []

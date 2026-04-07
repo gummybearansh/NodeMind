@@ -91,8 +91,7 @@ async def get_graph():
     except Exception as e:
         return {"error": str(e)}
 
-# Serve Next.js static files from the root /out/ directory
+# Serve Next.js static files if they exist (local built dev environment)
 frontend_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "out")
-if not os.path.exists(frontend_dir):
-    os.makedirs(frontend_dir)
-app.mount("/", StaticFiles(directory=frontend_dir, html=True), name="frontend")
+if os.path.exists(frontend_dir) and os.path.isdir(frontend_dir):
+    app.mount("/", StaticFiles(directory=frontend_dir, html=True), name="frontend")
