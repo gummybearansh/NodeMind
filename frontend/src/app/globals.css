@@ -192,3 +192,27 @@ body {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
 }
+
+/* Node Connectors (Handles) */
+.react-flow__handle {
+  width: 8px !important;
+  height: 8px !important;
+  background: #0d1117 !important;
+  border: 2px solid #6366f1 !important;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
+  transition: all 0.2s ease;
+}
+
+.react-flow__handle:hover {
+  transform: scale(1.2);
+  border-color: #818cf8 !important;
+  box-shadow: 0 0 12px #818cf8;
+}
+
+.react-flow__handle-top {
+  top: -3px !important;
+}
+
+.react-flow__handle-bottom {
+  bottom: -3px !important;
+}

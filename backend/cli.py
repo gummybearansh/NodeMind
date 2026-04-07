@@ -164,19 +164,7 @@ def cmd_start(args):
         print("❌ `.brain` directory not found. Please run `nodemind init` first.")
         sys.exit(1)
         
-    print("==================================================")
-    print("🚀 Starting NodeMind Backend...")
-    print("==================================================")
-    print("FRONTEND INSTRUCTIONS:")
-    print("To run the interactive web interface, please open a fresh terminal:")
-    print(" 1. git clone https://github.com/gummybearansh/NodeMind.git")
-    print(" 2. cd NodeMind/frontend")
-    print(" 3. npm install && npm run dev")
-    print("==================================================")
-    print("Starting Textual UI in 3 seconds... (Do not close this terminal)")
-    time.sleep(3)
-
-    # 1. Start Watchdog Observer
+    # Start Watchdog Observer
     watcher = BrainWatcher(brain_dir, loop=None) 
     watcher.start()
     

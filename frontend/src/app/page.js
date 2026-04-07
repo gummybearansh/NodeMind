@@ -114,8 +114,8 @@ function NodeMindCanvas({ nodes, edges, onNodesChange, onEdgesChange, onNodeClic
   useEffect(() => {
     if (nodes.length > 0) {
       setTimeout(() => fitView({ 
-        padding: { top: 120, bottom: 120, left: 120, right: 480 }, 
-        duration: 500 
+        padding: { top: 60, bottom: 60, left: 60, right: 440 }, 
+        duration: 400 
       }), 50);
     }
   }, [nodes.length, fitView]);
@@ -131,10 +131,10 @@ function NodeMindCanvas({ nodes, edges, onNodesChange, onEdgesChange, onNodeClic
       onNodeDragStart={onNodeDragStart}
       onNodeDragStop={onNodeDragStop}
       nodeTypes={nodeTypes}
-      minZoom={0.05}
-      maxZoom={2}
+      minZoom={0.5}
+      maxZoom={1.2}
       fitView
-      fitViewOptions={{ padding: { top: 120, bottom: 120, left: 120, right: 480 } }}
+      fitViewOptions={{ padding: { top: 60, bottom: 60, left: 60, right: 440 } }}
     >
       <Background color="#111318" gap={28} size={1} />
       <Controls style={{ background: '#181b21', border: '1px solid #272a31' }} />
@@ -352,6 +352,37 @@ function NodeMindCanvas({ nodes, edges, onNodesChange, onEdgesChange, onNodeClic
           </div>
         </div>
       </Panel>
+
+      {/* ── Focus Button — Global Fit ────────────────────────────────────────── */}
+      {nodes.length > 0 && (
+        <Panel position="bottom-center" style={{ marginBottom: 24 }}>
+          <button
+            onClick={() => fitView({ padding: { top: 60, bottom: 60, left: 60, right: 440 }, duration: 800 })}
+            style={{
+              background:    '#080a0f',
+              border:        '1px solid #1e2028',
+              color:         '#60a5fa',
+              padding:       '8px 18px',
+              borderRadius:  30,
+              fontSize:      11,
+              fontWeight:    700,
+              fontFamily:    'monospace',
+              cursor:        'pointer',
+              letterSpacing: '0.08em',
+              boxShadow:     '0 4px 12px rgba(0,0,0,0.5)',
+              display:       'flex',
+              alignItems:    'center',
+              gap:           10,
+              transition:    'all 0.2s ease',
+            }}
+            onMouseOver={e => { e.target.style.borderColor = '#60a5fa33'; e.target.style.background = '#0d1117'; }}
+            onMouseOut={e => { e.target.style.borderColor = '#1e2028'; e.target.style.background = '#080a0f'; }}
+          >
+            <span style={{ fontSize: 13, opacity: 0.8 }}>⛶</span>
+            FOCUS & FIT
+          </button>
+        </Panel>
+      )}
     </ReactFlow>
   );
 }
@@ -401,7 +432,7 @@ export default function NodeMindDashboard() {
           const x = COLUMN_X[owner] ?? 1520;
           const y = count * (NODE_HEIGHT + NODE_GAP) + 60;
 
-          const newNode = {
+           const newNode = {
             id:       nodeId,
             type:     'custom',
             data:     { ...payload.node.data, owner },
