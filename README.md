@@ -272,6 +272,44 @@ This will:
 
 ---
 
+## Clean Environment Test (Windows/macOS)
+
+For developer testing in a fresh environment, follow these steps to isolate and verify the installation:
+
+### Windows (PowerShell)
+```powershell
+cd $HOME\Desktop
+mkdir nodemind-test
+cd nodemind-test
+python -m venv testenv
+# Enable script execution for the session
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+# Activate the environment
+.\testenv\Scripts\Activate.ps1
+# Uninstall any existing versions and install the feature branch
+pip uninstall nodemind -y
+pip install --no-cache-dir "git+https://github.com/KunalMuk2205/NodeMind.git@feature/cli-onboarding-packaging"
+# Run setup (interactive wizard)
+nodemind setup
+# Start the daemon
+nodemind start
+```
+
+### macOS / Linux (Zsh/Bash)
+```bash
+cd ~/Desktop
+mkdir nodemind-test
+cd nodemind-test
+python3 -m venv testenv
+source testenv/bin/activate
+pip uninstall nodemind -y
+pip install --no-cache-dir "git+https://github.com/KunalMuk2205/NodeMind.git@feature/cli-onboarding-packaging"
+nodemind setup
+nodemind start
+```
+
+---
+
 ## CLI Usage
 
 The `nodemind` CLI comes with several built-in commands designed for a smooth developer experience:

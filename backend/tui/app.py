@@ -104,10 +104,6 @@ class NodeMindTUI(App):
         self.log_widget.write("[bold yellow]  💡 ACTION REQUIRED: Open a new terminal to start the UI:[/bold yellow]")
         self.log_widget.write("  [dim]▸[/dim] [white]cd frontend && npm run dev[/white]")
         self.log_widget.write("")
-        self.log_widget.write(
-            "  [dim]API Endpoint:[/dim] [cyan]http://localhost:8000/api/prompt[/cyan]"
-        )
-        self.log_widget.write("")
         self.log_widget.write("[dim]  ─────────────────────────── Agent Feed ───────────────────────────[/dim]")
         self.log_widget.write("")
 
