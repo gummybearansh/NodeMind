@@ -100,8 +100,12 @@ class NodeMindTUI(App):
             "[bold green]  ✦ NodeMind Daemon online.[/bold green]  "
             "[dim]Visualizer → [/dim][cyan]http://localhost:3000[/cyan]"
         )
+        self.log_widget.write("")
+        self.log_widget.write("[bold yellow]  💡 ACTION REQUIRED: Open a new terminal to start the UI:[/bold yellow]")
+        self.log_widget.write("  [dim]▸[/dim] [white]cd frontend && npm run dev[/white]")
+        self.log_widget.write("")
         self.log_widget.write(
-            "  [dim]Send a prompt via POST[/dim] [cyan]http://localhost:8000/api/prompt[/cyan]"
+            "  [dim]API Endpoint:[/dim] [cyan]http://localhost:8000/api/prompt[/cyan]"
         )
         self.log_widget.write("")
         self.log_widget.write("[dim]  ─────────────────────────── Agent Feed ───────────────────────────[/dim]")
